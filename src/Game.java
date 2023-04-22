@@ -23,6 +23,7 @@ public class Game extends Frame implements KeyListener {
     int field_num;
     Game() throws IOException {
 
+        // tworzenie pionkow dla obu graczy
         whitePlayerPawns = new Pawns[16];
         blackPlayerPawns = new Pawns[16];
         for (int i=0; i<8; i++){
@@ -47,19 +48,22 @@ public class Game extends Frame implements KeyListener {
         blackPlayerPawns[14] = new Queen(BLACK, 4, 0, "static/blackqueen.png", this);
         blackPlayerPawns[15] = new King(BLACK, 3, 0, "static/blackking.png", this);
 
+        // ustawienia okna wyswietlania
         setSize(700, 700);
         setTitle("CHESS");
         setLayout(null);
         setVisible(true);
 
-        player = 0;
-        pawn_num = 0;
-        field_num = 0;
+        // zmienne sterujace gra
+        player = 0; // gracz wykonujacy ruch  0 - bialy   1 - czarny
+        pawn_num = 0; // aktualnie wybrany pionek
+        field_num = 0; // aktualnie wybrane pole
 
         setBackground(Color.lightGray);
 
         this.addKeyListener(this);
 
+        // tworzenie listy dostepnych pionkow dla aktualnego gracza
         Pawns[][] wbpawns = {whitePlayerPawns, blackPlayerPawns};
         availablePawns = Arrays.stream(wbpawns[player]).filter(x -> x.active).toArray(Pawns[]::new);
 
@@ -67,8 +71,12 @@ public class Game extends Frame implements KeyListener {
     }
 
     public void paint(Graphics g){
+        /*
+        Rysowanie planszy
+        */
         setBackground(Color.lightGray);
 
+        // pola planszy
         for (int i=0; i<4; i++) {
             g.setColor(Color.getHSBColor(0, 0.3F, 0.3F));
             g.fillRect(140 + i * 140, 70, 70, 70);
@@ -91,6 +99,7 @@ public class Game extends Frame implements KeyListener {
             g.fillRect(140 + i * 140, 560, 70, 70);
         }
 
+        // dostepne ruchu dla wybranego pionka
         availableFields = availablePawns[Math.abs(pawn_num)%availablePawns.length].available_fields();
         for (int i=0; i<availableFields.size(); i++){
             g.setColor(Color.cyan);
@@ -99,11 +108,13 @@ public class Game extends Frame implements KeyListener {
         g.setColor(Color.ORANGE);
         g.fillRect(70+availablePawns[Math.abs(pawn_num)%availablePawns.length].position_x*70, 70+availablePawns[Math.abs(pawn_num)%16].position_y*70, 70, 70);
 
+        // aktualnie wybrany ruch
         g.setColor(Color.BLUE);
         if (!(availableFields.size() == 0)){
             g.fillRect(availableFields.get(Math.abs(field_num)%availableFields.size()).get(0)*70+70, availableFields.get(Math.abs(field_num)%availableFields.size()).get(1)*70+70, 70, 70);
         }
 
+        // pionki
         for (int j=0; j<16; j++){
             if (whitePlayerPawns[j].active) {
                 g.drawImage(whitePlayerPawns[j].image, 82 + whitePlayerPawns[j].position_x * 70, 82 + whitePlayerPawns[j].position_y * 70, 50, 50, null);
@@ -115,6 +126,10 @@ public class Game extends Frame implements KeyListener {
     }
 
     public int[][] getBoard() {
+        /*
+        Zwraca aktualny stan planszy, gdzie 2 - puste pole, 0 - bialy pionek, 1 - czarny pionek
+        Wykorzystywana do szukania dostepnych ruchow
+        */
         int[][] board = new int[8][8];
         for (int i=0; i<8; i++){
             for (int j=0; j<8; j++){
@@ -134,10 +149,18 @@ public class Game extends Frame implements KeyListener {
         return board;
     }
 
+    
+    // metody interfejsu KeyListener do obsługi działań gracza
     @Override
     public void keyTyped(KeyEvent e) {}
     @Override
     public void keyPressed(KeyEvent e) {
+        /*
+            metoda wykonująca działania w zależności od wciśniętego przycisku
+            37, 39 - kody strzałek - zmiana pionka
+            68, 65 - kody liter A i D - zmiana pola na które przemiieszczamy pionek
+            10 - enter - przemieszcza pionek na zadane pole
+        */
         if (e.getKeyCode() == 37){
             pawn_num--;
         }
