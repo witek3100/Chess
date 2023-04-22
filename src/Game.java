@@ -1,10 +1,6 @@
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -65,7 +61,7 @@ public class Game extends Frame implements KeyListener {
 
         // tworzenie listy dostepnych pionkow dla aktualnego gracza
         Pawns[][] wbpawns = {whitePlayerPawns, blackPlayerPawns};
-        availablePawns = Arrays.stream(wbpawns[player]).filter(x -> x.active).toArray(Pawns[]::new);
+        availablePawns = wbpawns[player];
 
         getBoard();
     }
@@ -101,9 +97,9 @@ public class Game extends Frame implements KeyListener {
 
         // dostepne ruchu dla wybranego pionka
         availableFields = availablePawns[Math.abs(pawn_num)%availablePawns.length].available_fields();
-        for (int i=0; i<availableFields.size(); i++){
+        for (List<Integer> availableField : availableFields) {
             g.setColor(Color.cyan);
-            g.fillRect( availableFields.get(i).get(0)*70+70, availableFields.get(i).get(1)*70+70, 70, 70);
+            g.fillRect(availableField.get(0) * 70 + 70, availableField.get(1) * 70 + 70, 70, 70);
         }
         g.setColor(Color.ORANGE);
         g.fillRect(70+availablePawns[Math.abs(pawn_num)%availablePawns.length].position_x*70, 70+availablePawns[Math.abs(pawn_num)%16].position_y*70, 70, 70);
@@ -126,15 +122,15 @@ public class Game extends Frame implements KeyListener {
         if (player == 0){
             g.setColor(Color.white);
             g.setFont(new Font("Arial Black", Font.BOLD, 20));
-            g.drawString("GRACZ BIALY", 270, 650);
+            g.drawString("WHITE", 300, 650);
         } else {
             g.setColor(Color.black);
             g.setFont(new Font("Arial Black", Font.BOLD, 20));
-            g.drawString("GRACZ CZARNY", 270, 650);
+            g.drawString("BLACK", 300, 650);
         }
         g.setColor(Color.black);
         g.setFont(new Font("Arial Black", Font.PLAIN,15));
-        g.drawString("<- -> - wybor pionka     A D - wybor pola     enter - wykonaj ruch", 100, 675);
+        g.drawString("<- -> - choose piece     A D - choose field     enter - move", 100, 675);
     }
 
     public int[][] getBoard() {
@@ -175,9 +171,15 @@ public class Game extends Frame implements KeyListener {
         */
         if (e.getKeyCode() == 37){
             pawn_num--;
+            while (!availablePawns[Math.abs(pawn_num) % availablePawns.length].active){
+                pawn_num--;
+            }
         }
         else if (e.getKeyCode() == 39){
             pawn_num++;
+            while (!availablePawns[Math.abs(pawn_num) % availablePawns.length].active){
+                pawn_num++;
+            }
         }
         else if (e.getKeyCode() == 68){
             field_num++;
@@ -190,7 +192,7 @@ public class Game extends Frame implements KeyListener {
             player = Math.abs(player-1);
             System.out.println(player);
             Pawns[][] wbpawns = {whitePlayerPawns, blackPlayerPawns};
-            availablePawns = Arrays.stream(wbpawns[player]).filter(x -> x.active).toArray(Pawns[]::new);
+            availablePawns = wbpawns[player];
         }
         repaint();
     }

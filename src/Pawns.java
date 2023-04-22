@@ -6,6 +6,8 @@ import java.util.*;
 
 abstract class Pawns {
 
+    /* klasa abstrakcyjna reprezantujaca pionek */
+
     int player;
     int position_x;
     int position_y;
@@ -22,8 +24,11 @@ abstract class Pawns {
     }
 
     public void move(int x, int y){
+        /* metoda przemeiszczajaca pionek */
         position_x = x;
         position_y = y;
+
+        // w razie potrzeby usuwa pionek przeciwnika z pola na ktorym staje
         for (int i=0; i<16; i++){
             Pawns[] enemyPawns;
             if (player == 0){
@@ -37,6 +42,7 @@ abstract class Pawns {
         }
     }
 
+    // metoda znajdujaca dostepne ruchy dla kazdego pionka - implementacja zalezna od ruchow jakie moze wykonac pionek
     public abstract List<List<Integer>> available_fields();
 }
 
@@ -102,7 +108,7 @@ class Knight extends Pawns {
         if (0 <= position_x-1 && 0 <= position_y-2) {
             if (boardState[position_y - 2][position_x - 1] != player) {
                 avf.add(new ArrayList<>());
-                avf.get(avf.size() - 1).addAll(Arrays.asList(position_x - 1, position_y - 2));
+                avf.get(0).addAll(Arrays.asList(position_x - 1, position_y - 2));
             }
         }
         if (0 <= position_x-2 && 0 <= position_y-1){
@@ -449,7 +455,7 @@ class King extends Pawns {
         if (0 <= position_x-1 && 0 <= position_y-1) {
             if (boardState[position_y - 1][position_x - 1] != player) {
                 avf.add(new ArrayList<>());
-                avf.get(avf.size() - 1).addAll(Arrays.asList(position_x - 1, position_y - 1));
+                avf.get(0).addAll(Arrays.asList(position_x - 1, position_y - 1));
             }
         }
         if (0 <= position_x-1){
