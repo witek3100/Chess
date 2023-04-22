@@ -12,8 +12,10 @@ public class Game extends Frame implements KeyListener {
     private Pawns[] whitePlayerPawns;
     private Pawns[] blackPlayerPawns;
     private Pawns[] availablePawns;
+    int[][] availableFields;
     int player;
     int pawn_num;
+    int field_num;
     Game() {
         whitePlayerPawns = new Pawns[16];
         blackPlayerPawns = new Pawns[16];
@@ -29,6 +31,7 @@ public class Game extends Frame implements KeyListener {
 
         player = 0;
         pawn_num = 0;
+        field_num = 0;
 
         setBackground(Color.lightGray);
 
@@ -66,6 +69,17 @@ public class Game extends Frame implements KeyListener {
 
         }
 
+        availableFields = availablePawns[Math.abs(pawn_num)%16].available_fields();
+        for (int i=0; i<availableFields.length; i++){
+            g.setColor(Color.cyan);
+            g.fillRect( availableFields[i][0]*70+70, availableFields[i][1]*70+70, 70, 70);
+        }
+        g.setColor(Color.ORANGE);
+        g.fillRect(70+availablePawns[Math.abs(pawn_num)%16].position_x*70, 70+availablePawns[Math.abs(pawn_num)%16].position_y*70, 70, 70);
+
+        g.setColor(Color.BLUE);
+        g.fillRect(availableFields[field_num%availableFields.length][0]*70+70, availableFields[field_num%availableFields.length][1]*70+70, 70, 70);
+
         for (int j=0; j<16; j++){
             g.setColor(Color.getHSBColor(10, 10, 10));
             if (whitePlayerPawns[j] != null){
@@ -76,9 +90,6 @@ public class Game extends Frame implements KeyListener {
                 g.fillRect(87+blackPlayerPawns[j].position_x*70, 87+blackPlayerPawns[j].position_y*70, 40, 40);
             }
         }
-
-        g.setColor(Color.cyan);
-        g.fillRect( availablePawns[Math.abs(pawn_num)%16].position_x*70+70, (availablePawns[Math.abs(pawn_num)%16].position_y-2)*70+70, 70, 70);
     }
 
     @Override
@@ -87,12 +98,20 @@ public class Game extends Frame implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == 37){
             pawn_num--;
-            repaint();
         }
         else if (e.getKeyCode() == 39){
             pawn_num++;
-            repaint();
         }
+        else if (e.getKeyCode() == 68){
+            field_num++;
+        }
+        else if (e.getKeyCode() == 65){
+            field_num--;
+        }
+        else if (e.getKeyCode() == 10){
+            availablePawns[Math.abs(pawn_num)%16].move(availableFields[field_num%availableFields.length][0], availableFields[field_num%availableFields.length][1]);
+        }
+        repaint();
     }
     @Override
     public void keyReleased(KeyEvent e) {}
