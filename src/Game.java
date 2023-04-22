@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -60,7 +61,8 @@ public class Game extends Frame implements KeyListener {
         this.addKeyListener(this);
 
         Pawns[][] wbpawns = {whitePlayerPawns, blackPlayerPawns};
-        availablePawns = wbpawns[player];
+        availablePawns = Arrays.stream(wbpawns[player]).filter(x -> x.active).toArray(Pawns[]::new);
+
         getBoard();
     }
 
@@ -89,13 +91,13 @@ public class Game extends Frame implements KeyListener {
             g.fillRect(140 + i * 140, 560, 70, 70);
         }
 
-        availableFields = availablePawns[Math.abs(pawn_num)%16].available_fields();
+        availableFields = availablePawns[Math.abs(pawn_num)%availablePawns.length].available_fields();
         for (int i=0; i<availableFields.size(); i++){
             g.setColor(Color.cyan);
             g.fillRect( availableFields.get(i).get(0)*70+70, availableFields.get(i).get(1)*70+70, 70, 70);
         }
         g.setColor(Color.ORANGE);
-        g.fillRect(70+availablePawns[Math.abs(pawn_num)%16].position_x*70, 70+availablePawns[Math.abs(pawn_num)%16].position_y*70, 70, 70);
+        g.fillRect(70+availablePawns[Math.abs(pawn_num)%availablePawns.length].position_x*70, 70+availablePawns[Math.abs(pawn_num)%16].position_y*70, 70, 70);
 
         g.setColor(Color.BLUE);
         if (!(availableFields.size() == 0)){
@@ -153,10 +155,13 @@ public class Game extends Frame implements KeyListener {
             player = Math.abs(player-1);
             System.out.println(player);
             Pawns[][] wbpawns = {whitePlayerPawns, blackPlayerPawns};
-            availablePawns = wbpawns[player];
+            availablePawns = Arrays.stream(wbpawns[player]).filter(x -> x.active).toArray(Pawns[]::new);
         }
         repaint();
     }
     @Override
     public void keyReleased(KeyEvent e) {}
 }
+
+
+
