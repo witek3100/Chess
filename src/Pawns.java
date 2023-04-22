@@ -83,11 +83,28 @@ class Pawn extends Pawns {
         }
         else {
             List<List<Integer>> avf = new ArrayList<>();
-            avf.add(new ArrayList<>());
-            avf.get(0).addAll(Arrays.asList(position_x, position_y+1));
-            if (position_y == 1) {
+            if (position_y + 1 >= 0) {
+                avf.add(new ArrayList<>());
+                avf.get(0).addAll(Arrays.asList(position_x, position_y + 1));
+            }
+            if (position_y == 6) {
                 avf.add(new ArrayList<>());
                 avf.get(1).addAll(Arrays.asList(position_x, position_y+2));
+            }
+            for (Pawns p : game.whitePlayerPawns){
+                if (p.active){
+                    if (p.position_x == position_x && p.position_y == position_y+1){
+                        avf.remove(0);
+                    }
+                    if (p.position_x == position_x-1 && p.position_y == position_y+1){
+                        avf.add(new ArrayList<>());
+                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x-1, position_y+1));
+                    }
+                    if (p.position_x == position_x+1 && p.position_y == position_y+1){
+                        avf.add(new ArrayList<>());
+                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x+1, position_y+1));
+                    }
+                }
             }
             return avf;
         }

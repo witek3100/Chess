@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -157,7 +156,25 @@ public class Game extends Frame implements KeyListener {
         return board;
     }
 
-    
+
+//    public void checkForMat(){
+//        List<List<Integer>> allWhiteAvailable = new ArrayList<>();
+//        for (Pawns p : whitePlayerPawns){
+//            for (List<Integer> field : p.available_fields()){
+//                allWhiteAvailable.add(field);
+//            }
+//        }
+//
+//        List<List<Integer>> allBlackAvailable = new ArrayList<>();
+//        for (Pawns p : blackPlayerPawns){
+//            for (List<Integer> field : p.available_fields()){
+//                allBlackAvailable.add(field);
+//            }
+//        }
+//
+//    }
+
+
     // metody interfejsu KeyListener do obsługi działań gracza
     @Override
     public void keyTyped(KeyEvent e) {}
@@ -189,8 +206,8 @@ public class Game extends Frame implements KeyListener {
         }
         else if (e.getKeyCode() == 10){
             availablePawns[Math.abs(pawn_num)%16].move(availableFields.get(Math.abs(field_num)%availableFields.size()).get(0), availableFields.get(Math.abs(field_num)%availableFields.size()).get(1));
+//            checkForMat();
             player = Math.abs(player-1);
-            System.out.println(player);
             Pawns[][] wbpawns = {whitePlayerPawns, blackPlayerPawns};
             availablePawns = wbpawns[player];
         }
