@@ -11,39 +11,41 @@ import java.util.List;
 
 public class Game extends Frame implements KeyListener {
 
-    private static final int WHITE = 0;
-    private static final int BLACK = 1;
-    private Pawns[] whitePlayerPawns;
-    private Pawns[] blackPlayerPawns;
-    private Pawns[] availablePawns;
+    public static final int WHITE = 0;
+    public static final int BLACK = 1;
+    public final Pawns[] whitePlayerPawns;
+    public final Pawns[] blackPlayerPawns;
+    public Pawns[] availablePawns;
     List<List<Integer>> availableFields;
     int player;
     int pawn_num;
     int field_num;
     Game() throws IOException {
+
         whitePlayerPawns = new Pawns[16];
         blackPlayerPawns = new Pawns[16];
         for (int i=0; i<8; i++){
-            whitePlayerPawns[i] = new Pawn(WHITE, i, 6, "static\\whitepawn.png");
-            blackPlayerPawns[i] = new Pawn(BLACK, i, 1, "static\\blackpawn.png");
+            whitePlayerPawns[i] = new Pawn(WHITE, i, 6, "static/whitepawn.png", this);
+            blackPlayerPawns[i] = new Pawn(BLACK, i, 1, "static/blackpawn.png", this);
         }
-        whitePlayerPawns[8] = new Knight(WHITE, 1, 7, "static/whiteknight.png");
-        whitePlayerPawns[9] = new Knight(WHITE, 6, 7, "static/whiteknight.png");
-        whitePlayerPawns[10] = new Rook(WHITE, 0, 7, "static/whiterook.png");
-        whitePlayerPawns[11] = new Rook(WHITE, 7, 7, "static/whiterook.png");
-        whitePlayerPawns[12] = new Bishop(WHITE, 2, 7, "static/whitebishop.png");
-        whitePlayerPawns[13] = new Bishop(WHITE, 5, 7, "static/whitebishop.png");
-        whitePlayerPawns[14] = new Queen(WHITE, 3, 7, "static/whitequeen.png");
-        whitePlayerPawns[15] = new King(WHITE, 4, 7, "static/whiteking.png");
+        whitePlayerPawns[8] = new Knight(WHITE, 1, 7, "static/whiteknight.png", this);
+        whitePlayerPawns[9] = new Knight(WHITE, 6, 7, "static/whiteknight.png", this);
+        whitePlayerPawns[10] = new Rook(WHITE, 0, 7, "static/whiterook.png", this);
+        whitePlayerPawns[11] = new Rook(WHITE, 7, 7, "static/whiterook.png", this);
+        whitePlayerPawns[12] = new Bishop(WHITE, 2, 7, "static/whitebishop.png", this);
+        whitePlayerPawns[13] = new Bishop(WHITE, 5, 7, "static/whitebishop.png", this);
+        whitePlayerPawns[14] = new Queen(WHITE, 3, 7, "static/whitequeen.png", this);
+        whitePlayerPawns[15] = new King(WHITE, 4, 7, "static/whiteking.png", this);
 
-        blackPlayerPawns[8] = new Knight(BLACK, 1, 0, "static/blackknight.png");
-        blackPlayerPawns[9] = new Knight(BLACK, 6, 0, "static/blackknight.png");
-        blackPlayerPawns[10] = new Rook(BLACK, 0, 0, "static/blackrook.png");
-        blackPlayerPawns[11] = new Rook(BLACK, 7, 0, "static/blackrook.png");
-        blackPlayerPawns[12] = new Bishop(BLACK, 2, 0, "static/blackbishop.png");
-        blackPlayerPawns[13] = new Bishop(BLACK, 5, 0, "static/blackbishop.png");
-        blackPlayerPawns[14] = new Queen(BLACK, 4, 0, "static/blackqueen.png");
-        blackPlayerPawns[15] = new King(BLACK, 3, 0, "static/blackking.png");
+        blackPlayerPawns[8] = new Knight(BLACK, 1, 0, "static/blackknight.png", this);
+        blackPlayerPawns[9] = new Knight(BLACK, 6, 0, "static/blackknight.png", this);
+        blackPlayerPawns[10] = new Rook(BLACK, 0, 0, "static/blackrook.png", this);
+        blackPlayerPawns[11] = new Rook(BLACK, 7, 0, "static/blackrook.png", this);
+        blackPlayerPawns[12] = new Bishop(BLACK, 2, 0, "static/blackbishop.png", this);
+        blackPlayerPawns[13] = new Bishop(BLACK, 5, 0, "static/blackbishop.png", this);
+        blackPlayerPawns[14] = new Queen(BLACK, 4, 0, "static/blackqueen.png", this);
+        blackPlayerPawns[15] = new King(BLACK, 3, 0, "static/blackking.png", this);
+
         setSize(700, 700);
         setTitle("CHESS");
         setLayout(null);
@@ -59,7 +61,7 @@ public class Game extends Frame implements KeyListener {
 
         Pawns[][] wbpawns = {whitePlayerPawns, blackPlayerPawns};
         availablePawns = wbpawns[player];
-
+        getBoard();
     }
 
     public void paint(Graphics g){
@@ -96,13 +98,38 @@ public class Game extends Frame implements KeyListener {
         g.fillRect(70+availablePawns[Math.abs(pawn_num)%16].position_x*70, 70+availablePawns[Math.abs(pawn_num)%16].position_y*70, 70, 70);
 
         g.setColor(Color.BLUE);
-        g.fillRect(availableFields.get(Math.abs(field_num)%availableFields.size()).get(0)*70+70, availableFields.get(Math.abs(field_num)%availableFields.size()).get(1)*70+70, 70, 70);
-
-        for (int j=0; j<16; j++){
-            g.drawImage(whitePlayerPawns[j].image, 82+whitePlayerPawns[j].position_x*70, 82+whitePlayerPawns[j].position_y*70, 50, 50, null);
-            g.drawImage(blackPlayerPawns[j].image, 82+blackPlayerPawns[j].position_x*70, 82+blackPlayerPawns[j].position_y*70, 50, 50, null);
+        if (!(availableFields.size() == 0)){
+            g.fillRect(availableFields.get(Math.abs(field_num)%availableFields.size()).get(0)*70+70, availableFields.get(Math.abs(field_num)%availableFields.size()).get(1)*70+70, 70, 70);
         }
 
+        for (int j=0; j<16; j++){
+            if (whitePlayerPawns[j].active) {
+                g.drawImage(whitePlayerPawns[j].image, 82 + whitePlayerPawns[j].position_x * 70, 82 + whitePlayerPawns[j].position_y * 70, 50, 50, null);
+            }
+            if (blackPlayerPawns[j].active) {
+                g.drawImage(blackPlayerPawns[j].image, 82 + blackPlayerPawns[j].position_x * 70, 82 + blackPlayerPawns[j].position_y * 70, 50, 50, null);
+            }
+        }
+    }
+
+    public int[][] getBoard() {
+        int[][] board = new int[8][8];
+        for (int i=0; i<8; i++){
+            for (int j=0; j<8; j++){
+                board[i][j] = 2;
+            }
+        }
+        for (Pawns p : blackPlayerPawns){
+            if (p.active) {
+                board[p.position_y][p.position_x] = 1;
+            }
+        }
+        for (Pawns p : whitePlayerPawns){
+            if (p.active) {
+                board[p.position_y][p.position_x] = 0;
+            }
+        }
+        return board;
     }
 
     @Override
@@ -122,7 +149,11 @@ public class Game extends Frame implements KeyListener {
             field_num--;
         }
         else if (e.getKeyCode() == 10){
-            availablePawns[Math.abs(pawn_num)%16].move(availableFields.get(field_num%availableFields.size()).get(0), availableFields.get(field_num%availableFields.size()).get(1));
+            availablePawns[Math.abs(pawn_num)%16].move(availableFields.get(Math.abs(field_num)%availableFields.size()).get(0), availableFields.get(Math.abs(field_num)%availableFields.size()).get(1));
+            player = Math.abs(player-1);
+            System.out.println(player);
+            Pawns[][] wbpawns = {whitePlayerPawns, blackPlayerPawns};
+            availablePawns = wbpawns[player];
         }
         repaint();
     }
