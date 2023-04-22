@@ -123,6 +123,18 @@ public class Game extends Frame implements KeyListener {
                 g.drawImage(blackPlayerPawns[j].image, 82 + blackPlayerPawns[j].position_x * 70, 82 + blackPlayerPawns[j].position_y * 70, 50, 50, null);
             }
         }
+        if (player == 0){
+            g.setColor(Color.white);
+            g.setFont(new Font("Arial Black", Font.BOLD, 20));
+            g.drawString("GRACZ BIALY", 270, 650);
+        } else {
+            g.setColor(Color.black);
+            g.setFont(new Font("Arial Black", Font.BOLD, 20));
+            g.drawString("GRACZ CZARNY", 270, 650);
+        }
+        g.setColor(Color.black);
+        g.setFont(new Font("Arial Black", Font.PLAIN,15));
+        g.drawString("<- -> - wybor pionka     A D - wybor pola     enter - wykonaj ruch", 100, 675);
     }
 
     public int[][] getBoard() {
