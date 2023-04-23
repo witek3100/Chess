@@ -1,5 +1,5 @@
 # Chess
-Simple chess game for 2 players. __
+Simple chess game for 2 players. <br/>
 Made using java awt library
 
 #
