@@ -2,6 +2,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -9,16 +11,37 @@ public class Game extends Frame implements KeyListener {
 
     public static final int WHITE = 0;
     public static final int BLACK = 1;
-    public final Pawns[] whitePlayerPawns;
-    public final Pawns[] blackPlayerPawns;
+    public static Pawns[] whitePlayerPawns;
+    public static Pawns[] blackPlayerPawns;
     public Pawns[] availablePawns;
     List<List<Integer>> availableFields;
     int player;
     int pawn_num;
     int field_num;
+    int mat;
+
     Game() throws IOException {
 
         // tworzenie pionkow dla obu graczy
+        createPawns();
+
+        // ustawienia okna wyswietlania
+        setSize(700, 700);
+        setTitle("CHESS");
+        setLayout(null);
+        setVisible(true);
+        setBackground(Color.lightGray);
+
+        // zmienne sterujace gra
+        player = WHITE; // gracz wykonujacy ruch  0 - bialy   1 - czarny
+        pawn_num = 0; // aktualnie wybrany pionek
+        field_num = 0; // aktualnie wybrane pole
+        availablePawns = new Pawns[][]{whitePlayerPawns, blackPlayerPawns}[player]; // lista dostepnych pionkow dla aktualnego gracza
+
+        this.addKeyListener(this);
+    }
+
+    public void createPawns() throws IOException {
         whitePlayerPawns = new Pawns[16];
         blackPlayerPawns = new Pawns[16];
         for (int i=0; i<8; i++){
@@ -42,27 +65,6 @@ public class Game extends Frame implements KeyListener {
         blackPlayerPawns[13] = new Bishop(BLACK, 5, 0, "static/blackbishop.png", this);
         blackPlayerPawns[14] = new Queen(BLACK, 4, 0, "static/blackqueen.png", this);
         blackPlayerPawns[15] = new King(BLACK, 3, 0, "static/blackking.png", this);
-
-        // ustawienia okna wyswietlania
-        setSize(700, 700);
-        setTitle("CHESS");
-        setLayout(null);
-        setVisible(true);
-
-        // zmienne sterujace gra
-        player = 0; // gracz wykonujacy ruch  0 - bialy   1 - czarny
-        pawn_num = 0; // aktualnie wybrany pionek
-        field_num = 0; // aktualnie wybrane pole
-
-        setBackground(Color.lightGray);
-
-        this.addKeyListener(this);
-
-        // tworzenie listy dostepnych pionkow dla aktualnego gracza
-        Pawns[][] wbpawns = {whitePlayerPawns, blackPlayerPawns};
-        availablePawns = wbpawns[player];
-
-        getBoard();
     }
 
     public void paint(Graphics g){
@@ -157,27 +159,33 @@ public class Game extends Frame implements KeyListener {
     }
 
 
-//    public void checkForMat(){
-//        List<List<Integer>> allWhiteAvailable = new ArrayList<>();
-//        for (Pawns p : whitePlayerPawns){
-//            for (List<Integer> field : p.available_fields()){
-//                allWhiteAvailable.add(field);
-//            }
-//        }
-//
-//        List<List<Integer>> allBlackAvailable = new ArrayList<>();
-//        for (Pawns p : blackPlayerPawns){
-//            for (List<Integer> field : p.available_fields()){
-//                allBlackAvailable.add(field);
-//            }
-//        }
-//
-//    }
+    public void checkForMat(){
+        List<List<Integer>> allWhiteAvailable = new ArrayList<>();
+        for (Pawns p : whitePlayerPawns){
+            for (List<Integer> field : p.available_fields()){
+                allWhiteAvailable.add(field);
+            }
+        }
+
+        List<List<Integer>> allBlackAvailable = new ArrayList<>();
+        for (Pawns p : blackPlayerPawns){
+            for (List<Integer> field : p.available_fields()){
+                allBlackAvailable.add(field);
+            }
+        }
+        if (allWhiteAvailable.contains(Arrays.asList(blackPlayerPawns[15].position_x, blackPlayerPawns[15].position_y))){
+            mat = WHITE;
+            System.out.println("mat white");
+        }
+        if (allBlackAvailable.contains(Arrays.asList(whitePlayerPawns[15].position_x, whitePlayerPawns[15].position_y))){
+            mat = BLACK;
+            System.out.println("mat black");
+        }
+        mat = -1;
+    }
 
 
     // metody interfejsu KeyListener do obsługi działań gracza
-    @Override
-    public void keyTyped(KeyEvent e) {}
     @Override
     public void keyPressed(KeyEvent e) {
         /*
@@ -206,15 +214,19 @@ public class Game extends Frame implements KeyListener {
         }
         else if (e.getKeyCode() == 10){
             availablePawns[Math.abs(pawn_num)%16].move(availableFields.get(Math.abs(field_num)%availableFields.size()).get(0), availableFields.get(Math.abs(field_num)%availableFields.size()).get(1));
-//            checkForMat();
+            checkForMat();
             player = Math.abs(player-1);
-            Pawns[][] wbpawns = {whitePlayerPawns, blackPlayerPawns};
-            availablePawns = wbpawns[player];
+            availablePawns = new Pawns[][]{whitePlayerPawns, blackPlayerPawns}[player];
+            while (!availablePawns[Math.abs(pawn_num) % availablePawns.length].active){
+                pawn_num++;
+            }
         }
         repaint();
     }
     @Override
     public void keyReleased(KeyEvent e) {}
+    @Override
+    public void keyTyped(KeyEvent e) {}
 }
 
 

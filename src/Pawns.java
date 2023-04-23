@@ -32,9 +32,9 @@ abstract class Pawns {
         for (int i=0; i<16; i++){
             Pawns[] enemyPawns;
             if (player == 0){
-                enemyPawns = game.blackPlayerPawns;
+                enemyPawns = Game.blackPlayerPawns;
             } else {
-                enemyPawns = game.whitePlayerPawns;
+                enemyPawns = Game.whitePlayerPawns;
             }
             if (enemyPawns[i].position_x == position_x && enemyPawns[i].position_y == position_y){
                 enemyPawns[i].active = false;
@@ -44,6 +44,7 @@ abstract class Pawns {
 
     // metoda znajdujaca dostepne ruchy dla kazdego pionka - implementacja zalezna od ruchow jakie moze wykonac pionek
     public abstract List<List<Integer>> available_fields();
+
 }
 
 class Pawn extends Pawns {
@@ -56,26 +57,26 @@ class Pawn extends Pawns {
     public List<List<Integer>> available_fields() {
         if (player == 0){
             List<List<Integer>> avf = new ArrayList<>();
-            if (position_y - 1 >= 0) {
-                avf.add(new ArrayList<>());
-                avf.get(0).addAll(Arrays.asList(position_x, position_y - 1));
-            }
-            if (position_y == 6) {
-                avf.add(new ArrayList<>());
-                avf.get(1).addAll(Arrays.asList(position_x, position_y-2));
-            }
-            for (Pawns p : game.blackPlayerPawns){
-                if (p.active){
-                    if (p.position_x == position_x && p.position_y == position_y-1){
-                        avf.remove(0);
-                    }
-                    if (p.position_x == position_x-1 && p.position_y == position_y-1){
+            int[][] boardState = game.getBoard();
+            if (position_y-1 >= 0){
+                if (boardState[position_y-1][position_x] == 2){
+                    avf.add(new ArrayList<>());
+                    avf.get(0).addAll(Arrays.asList(position_x, position_y - 1));
+                    if (position_y == 6 && boardState[position_y-2][position_x] == 2){
                         avf.add(new ArrayList<>());
-                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x-1, position_y-1));
+                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x, position_y - 2));
                     }
-                    if (p.position_x == position_x+1 && p.position_y == position_y-1){
+                }
+                if (position_x-1 >= 0){
+                    if (boardState[position_y-1][position_x-1] == 1){
                         avf.add(new ArrayList<>());
-                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x+1, position_y-1));
+                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x - 1, position_y - 1));
+                    }
+                }
+                if (position_x+1 < 8) {
+                    if (boardState[position_y-1][position_x+1] == 1){
+                        avf.add(new ArrayList<>());
+                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x + 1, position_y - 1));
                     }
                 }
             }
@@ -83,26 +84,26 @@ class Pawn extends Pawns {
         }
         else {
             List<List<Integer>> avf = new ArrayList<>();
-            if (position_y + 1 >= 0) {
-                avf.add(new ArrayList<>());
-                avf.get(0).addAll(Arrays.asList(position_x, position_y + 1));
-            }
-            if (position_y == 6) {
-                avf.add(new ArrayList<>());
-                avf.get(1).addAll(Arrays.asList(position_x, position_y+2));
-            }
-            for (Pawns p : game.whitePlayerPawns){
-                if (p.active){
-                    if (p.position_x == position_x && p.position_y == position_y+1){
-                        avf.remove(0);
-                    }
-                    if (p.position_x == position_x-1 && p.position_y == position_y+1){
+            int[][] boardState = game.getBoard();
+            if (position_y+1 < 8){
+                if (boardState[position_y+1][position_x] == 2){
+                    avf.add(new ArrayList<>());
+                    avf.get(0).addAll(Arrays.asList(position_x, position_y + 1));
+                    if (position_y == 1 && boardState[position_y+2][position_x] == 2){
                         avf.add(new ArrayList<>());
-                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x-1, position_y+1));
+                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x, position_y + 2));
                     }
-                    if (p.position_x == position_x+1 && p.position_y == position_y+1){
+                }
+                if (position_x-1 >= 0){
+                    if (boardState[position_y+1][position_x-1] == 0){
                         avf.add(new ArrayList<>());
-                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x+1, position_y+1));
+                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x - 1, position_y + 1));
+                    }
+                }
+                if (position_x+1 < 8) {
+                    if (boardState[position_y+1][position_x+1] == 0){
+                        avf.add(new ArrayList<>());
+                        avf.get(avf.size()-1).addAll(Arrays.asList(position_x + 1, position_y + 1));
                     }
                 }
             }
